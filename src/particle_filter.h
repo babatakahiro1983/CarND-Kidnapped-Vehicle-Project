@@ -27,8 +27,7 @@ struct Particle {
 
 class ParticleFilter {
 	
-	// Number of particles to draw
-	int num_particles; 
+
 	
 	
 	
@@ -40,6 +39,9 @@ class ParticleFilter {
 	
 public:
 	
+	// Number of particles to draw
+	int num_particles;
+
 	// Set of current particles
 	std::vector<Particle> particles;
 
@@ -78,7 +80,7 @@ public:
 	 * @param predicted Vector of predicted landmark observations
 	 * @param observations Vector of landmark observations
 	 */
-	void dataAssociation(std::vector<LandmarkObs> predicted, std::vector<LandmarkObs>& observations);
+	void dataAssociation(const std::vector<LandmarkObs> predicted, const std::vector<LandmarkObs>& observations);
 	
 	/**
 	 * updateWeights Updates the weights for each particle based on the likelihood of the 
