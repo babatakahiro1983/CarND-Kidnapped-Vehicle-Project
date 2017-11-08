@@ -52,11 +52,13 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 
-		particles[loop_1].x = dist_x(gen);
-		particles[loop_1].y = dist_y(gen);
-		particles[loop_1].theta = dist_theta(gen);
-		
-		cout << "check point 2-1-1" << endl;
+		Particle p_tmp;
+		p_tmp.id = i;
+		p_tmp.x = dist_x(gen);
+	        p_tmp.y = dist_y(gen);
+		p_tmp.theta = dist_theta(gen);
+		p_tmp.weight = 1.0;
+                particles.push_back(p_tmp);
 	}
 	
 	cout << "check point 2-2" << endl;
