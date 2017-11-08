@@ -251,6 +251,8 @@ void ParticleFilter::resample() {
 
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 			
+		Particle p_temp;
+		
 		beta += rnd() * 2.0 * weight_max;
 		while (beta > particles[index].weight) {
 			beta -= particles[index].weight;
@@ -258,7 +260,9 @@ void ParticleFilter::resample() {
 		}
 
 		cout << "check point 6-2" << endl;
-		particles_temp[loop_1] = particles[index];
+		p_temp = particles[index];
+		particles_temp.push_back(p_temp);
+
 	}
 	
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
