@@ -168,7 +168,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			observations_map.push_back(obs_tmp);
 
 		}
-		cout << "landmarks " << observations_map.size() << endl;
+		cout << "observations " << observations_map.size() << endl;
 
 		// (2)Associate
 		for (int loop_4 = 0; loop_4 < map_landmarks.landmark_list.size(); ++loop_4) {
@@ -197,6 +197,9 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			mu_x = map_landmarks.landmark_list[observations[loop_2].id].x_f; // assosiateされたランドマークの座標
 			mu_y = map_landmarks.landmark_list[observations[loop_2].id].y_f; // assosiateされたランドマークの座標
 
+			cout << "mu_x " << mu_x << endl;
+			cout << "mu_y " << mu_y << endl;
+
 			// calculate normalization term
 			gauss_norm = (1 / (2 * M_PI * sig_x * sig_y));
 
@@ -209,6 +212,8 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 
 			// multiply all the calculated measurement probabilities
 			particles[loop_1].weight = particles[loop_1].weight * weight;
+
+			cout << "weight " << weight << endl;
 		}
 
 		cout << "weight " << particles[loop_1].weight << endl;
