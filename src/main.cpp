@@ -47,6 +47,8 @@ int main()
   ParticleFilter pf;
 
   pf.num_particles = 10; // Number of particles to draw
+	
+  cout << "check point 1" << endl;
 
   h.onMessage([&pf,&map,&delta_t,&sensor_range,&sigma_pos,&sigma_landmark](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -73,6 +75,8 @@ int main()
 			double sense_x = std::stod(j[1]["sense_x"].get<std::string>());
 			double sense_y = std::stod(j[1]["sense_y"].get<std::string>());
 			double sense_theta = std::stod(j[1]["sense_theta"].get<std::string>());
+		  
+		  	cout << "check point 2" << endl;
 
 			pf.init(sense_x, sense_y, sense_theta, sigma_pos);
 		  }
@@ -80,10 +84,14 @@ int main()
 			// Predict the vehicle's next state from previous (noiseless control) data.
 		  	double previous_velocity = std::stod(j[1]["previous_velocity"].get<std::string>());
 			double previous_yawrate = std::stod(j[1]["previous_yawrate"].get<std::string>());
+			  
+			cout << "check point 3" << endl;  
 
 			pf.prediction(delta_t, sigma_pos, previous_velocity, previous_yawrate);
 		  }
 
+		  cout << "check point 4" << endl;  
+		
 		  // receive noisy observation data from the simulator
 		  // sense_observations in JSON format [{obs_x,obs_y},{obs_x,obs_y},...{obs_x,obs_y}]
 		  	vector<LandmarkObs> noisy_observations;
@@ -113,7 +121,11 @@ int main()
         	}
 
 		  // Update the weights and resample
+		
+		cout << "check point 5" << endl;  
 		  pf.updateWeights(sensor_range, sigma_landmark, noisy_observations, map);
+		
+		cout << "check point 6" << endl;  
 		  pf.resample();
 
 		  // Calculate and output the average weighted error of the particle filter over all time steps so far.
