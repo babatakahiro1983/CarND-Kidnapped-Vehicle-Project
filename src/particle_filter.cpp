@@ -197,6 +197,10 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			mu_x = map_landmarks.landmark_list[observations[loop_2].id].x_f; // assosiateされたランドマークの座標
 			mu_y = map_landmarks.landmark_list[observations[loop_2].id].y_f; // assosiateされたランドマークの座標
 
+			cout << "observations_id " << observations[loop_2].id << endl;
+
+			cout << "observations_map_x " << observations_map[loop_2].x << endl;
+			cout << "observations_map_y " << observations_map[loop_2].y << endl;
 			cout << "mu_x " << mu_x << endl;
 			cout << "mu_y " << mu_y << endl;
 
