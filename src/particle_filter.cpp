@@ -55,6 +55,8 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 		particles[loop_1].x = dist_x(gen);
 		particles[loop_1].y = dist_y(gen);
 		particles[loop_1].theta = dist_theta(gen);
+		
+		cout << "check point 2-1-1" << endl;
 	}
 	
 	cout << "check point 2-2" << endl;
