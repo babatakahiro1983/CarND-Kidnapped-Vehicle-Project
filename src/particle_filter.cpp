@@ -94,7 +94,7 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 	}
 }
 
-void ParticleFilter::dataAssociation(const std::vector<LandmarkObs> predicted, const std::vector<LandmarkObs> &observations) {
+void ParticleFilter::dataAssociation(const std::vector<LandmarkObs> predicted, std::vector<LandmarkObs> &observations) {
 	// TODO: Find the predicted measurement that is closest to each observed measurement and assign the 
 	//   observed measurement to this particular landmark.
 	// NOTE: this method will NOT be called by the grading code. But you will probably find it useful to 
@@ -111,17 +111,15 @@ void ParticleFilter::dataAssociation(const std::vector<LandmarkObs> predicted, c
 	dist_min = 100;
 
 	// 観測点ごとにランドマークの最近点を探索する。
-	for (int loop_3 = 0; loop_3 < predicted.size(); ++loop_3) {
-
-		for (int loop_4 = 0; loop_4 < observations.size(); ++loop_4) {
+	for (int loop_3 = 0; loop_3 < observations.size(); ++loop_3) {
+		for (int loop_4 = 0; loop_4 < predicted.size(); ++loop_4) {
 			
-			dist_tmp = dist(predicted[loop_3].x, predicted[loop_3].y, observations[loop_4].x, observations[loop_4].y);
+			dist_tmp = dist(predicted[loop_4].x, predicted[loop_4].y, observations[loop_3].x, observations[loop_3].y);
 
 			if (dist_tmp < dist_min) {
-				 
-				observations[loop_4].id; // 探索した最近観測点の情報をどのように利用するか？
+		
+				observations[loop_3].id = loop_4; 
 				dist_min = dist_tmp;
-
 			}
 		}
 	}
@@ -142,7 +140,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 	//   http://planning.cs.uiuc.edu/node99.html
 
 	double sig_x, sig_y, gauss_norm, exponent, mu_x, mu_y, weight;
-	std::vector<LandmarkObs> observations_map;
+	std::vector<LandmarkObs> observations_map, landmarks;
 
 	
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
@@ -159,23 +157,31 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			observations_map[loop_2].y = particles[loop_1].y + (sin(particles[loop_1].theta) * observations[loop_2].x) + (cos(particles[loop_1].theta) * observations[loop_2].y);
 
 		}
-
 		// (2)Associate
-		dataAssociation(map_landmarks.landmark_list, observations_map);
+		for (int loop_4 = 0; loop_4 < map_landmarks.landmark_list.size(); ++loop_4) {
+
+			landmarks[loop_4].id = map_landmarks.landmark_list[loop_4].id_i;
+			landmarks[loop_4].x = map_landmarks.landmark_list[loop_4].x_f;
+			landmarks[loop_4].y = map_landmarks.landmark_list[loop_4].y_f;
+		}
+
+
+		dataAssociation(landmarks, observations_map);
 
 
 		// (3)updateWeight
 		for (int loop_2 = 0; loop_2 < observations.size(); ++loop_2) {
 			sig_x = std_landmark[0];
 			sig_y = std_landmark[1];
-			mu_x = map_landmarks.landmark_list[associated_id].x_f; // assosiateされたランドマークの座標
-			mu_y = map_landmarks.landmark_list[associated_id].y_f; // assosiateされたランドマークの座標
+			mu_x = map_landmarks.landmark_list[observations[loop_2].id].x_f; // assosiateされたランドマークの座標
+			mu_y = map_landmarks.landmark_list[observations[loop_2].id].y_f; // assosiateされたランドマークの座標
 
 			// calculate normalization term
 			gauss_norm = (1 / (2 * M_PI * sig_x * sig_y));
 
 			// calculate exponent
-			exponent = ((observations_map[loop_2].x - mu_x) ^ 2) / (2 * sig_x ^ 2) + ((observations_map[loop_2].y - mu_y) ^ 2) / (2 * sig_y ^ 2);
+			exponent = std::pow((observations_map[loop_2].x - mu_x), 2.0) / std::pow(2 * sig_x, 2.0) 
+				     + std::pow((observations_map[loop_2].y - mu_y), 2.0) / std::pow(2 * sig_y, 2.0);
 
 			// calculate weight using normalization terms and exponent
 			weight = gauss_norm * exp(-exponent);
