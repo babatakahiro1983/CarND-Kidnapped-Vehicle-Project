@@ -233,7 +233,9 @@ void ParticleFilter::resample() {
 
 	std::random_device rnd;
 	std::vector<Particle> particles_temp;
-	int index = int(rnd() * num_particles);
+	std::discrete_distribution<int> dist(0,num_particles - 1);
+	
+
 	double beta = 0.0;
 	double weight_max = 0.0;
 
@@ -244,6 +246,8 @@ void ParticleFilter::resample() {
 	}
 
 	cout << "check point 6-1" << endl;
+
+	int index = dist(rnd);
 
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 			
