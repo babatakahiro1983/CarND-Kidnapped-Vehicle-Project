@@ -198,6 +198,32 @@ void ParticleFilter::resample() {
 	// NOTE: You may find std::discrete_distribution helpful here.
 	//   http://en.cppreference.com/w/cpp/numeric/random/discrete_distribution
 
+	std::random_device rnd;
+	std::vector<Particle> particles_temp;
+	int index = int(rnd() * num_particles);
+	double beta = 0.0;
+	double weight_max = 0.0;
+
+	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
+		if (weight_max < particles[loop_1].weight) {
+			weight_max = particles[loop_1].weight;
+		}
+	}
+
+	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
+			
+		beta += rnd() * 2.0 * weight_max;
+		while (beta > particles[index].weight) {
+			beta -= particles[index].weight;
+			index = (index + 1) % num_particles;
+		}
+		particles_temp[loop_1] = particles[index];
+	}
+	
+	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
+		particles[loop_1] = particles_temp[loop_1];
+	}
+
 }
 
 Particle ParticleFilter::SetAssociations(Particle particle, std::vector<int> associations, std::vector<double> sense_x, std::vector<double> sense_y)
