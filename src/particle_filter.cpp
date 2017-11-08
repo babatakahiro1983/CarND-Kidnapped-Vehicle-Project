@@ -48,7 +48,6 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	normal_distribution<double> dist_y(y, std_y);
 	normal_distribution<double> dist_theta(theta, std_theta);
 
-	cout << "check point 2-1" << endl;
 
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 
@@ -60,12 +59,8 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 		p_tmp.weight = 1.0;
                 particles.push_back(p_tmp);
 	}
-	
-	cout << "check point 2-2" << endl;
-	
+
 	is_initialized = true;
-	
-	cout << "check point 2-3" << endl;
 }
 
 void ParticleFilter::prediction(double delta_t, double std_pos[], double velocity, double yaw_rate) {
@@ -155,9 +150,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 	
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 
-		particles[loop_1].weight = 1.0;
-		
-		cout << "check point 5-1" << endl;
+		particles[loop_1].weight = 1.0;		
 
 		// (1)Transform
 		for (int loop_2 = 0; loop_2 < observations.size(); ++loop_2) {
@@ -178,8 +171,6 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		// (2)Associate
 		for (int loop_4 = 0; loop_4 < map_landmarks.landmark_list.size(); ++loop_4) {
 
-			cout << "check point 5-3" << endl;
-
 			LandmarkObs landmarks_tmp;
 
 			landmarks_tmp.id = map_landmarks.landmark_list[loop_4].id_i;
@@ -189,8 +180,6 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			landmarks.push_back(landmarks_tmp);
 			
 		}
-		
-		cout << "check point 5-4" << endl;
 
 		dataAssociation(landmarks, observations_map);
 
@@ -199,8 +188,6 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		
 		// (3)updateWeight
 		for (int loop_2 = 0; loop_2 < observations.size(); ++loop_2) {
-			
-			cout << "check point 5-5" << endl;
 			
 			sig_x = std_landmark[0];
 			sig_y = std_landmark[1];
@@ -220,8 +207,6 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			// multiply all the calculated measurement probabilities
 			particles[loop_1].weight = particles[loop_1].weight * weight;
 		}
-		
-		cout << "check point 5-6" << endl;
 	}
 
 }
@@ -235,7 +220,7 @@ void ParticleFilter::resample() {
 	std::vector<Particle> particles_temp;
 	std::discrete_distribution<int> dist(0,num_particles - 1);
 	
-
+	int index = dist(rnd);
 	double beta = 0.0;
 	double weight_max = 0.0;
 
@@ -245,9 +230,6 @@ void ParticleFilter::resample() {
 		}
 	}
 
-	cout << "check point 6-1" << endl;
-
-	int index = dist(rnd);
 
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 			
@@ -259,7 +241,6 @@ void ParticleFilter::resample() {
 			index = (index + 1) % num_particles;
 		}
 
-		cout << "check point 6-2" << endl;
 		p_temp = particles[index];
 		particles_temp.push_back(p_temp);
 
@@ -267,7 +248,6 @@ void ParticleFilter::resample() {
 	
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 
-		cout << "check point 6-3" << endl;
 		particles[loop_1] = particles_temp[loop_1];
 	}
 
