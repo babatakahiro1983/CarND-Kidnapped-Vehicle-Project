@@ -56,6 +56,8 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 		particles[loop_1].y = dist_y(gen);
 		particles[loop_1].theta = dist_theta(gen);
 	}
+	
+	is_initialized = true;
 }
 
 void ParticleFilter::prediction(double delta_t, double std_pos[], double velocity, double yaw_rate) {
@@ -110,7 +112,7 @@ void ParticleFilter::dataAssociation(const std::vector<LandmarkObs> predicted, s
 	double dist_tmp, dist_min;
 	dist_min = 100;
 
-	// ŠÏ‘ª“_‚²‚Æ‚Éƒ‰ƒ“ƒhƒ}[ƒN‚ÌÅ‹ß“_‚ğ’Tõ‚·‚éB
+	// è¦³æ¸¬ç‚¹ã”ã¨ã«ãƒ©ãƒ³ãƒ‰ãƒãƒ¼ã‚¯ã®æœ€è¿‘ç‚¹ã‚’æ¢ç´¢ã™ã‚‹ã€‚
 	for (int loop_3 = 0; loop_3 < observations.size(); ++loop_3) {
 		for (int loop_4 = 0; loop_4 < predicted.size(); ++loop_4) {
 			
@@ -173,8 +175,8 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		for (int loop_2 = 0; loop_2 < observations.size(); ++loop_2) {
 			sig_x = std_landmark[0];
 			sig_y = std_landmark[1];
-			mu_x = map_landmarks.landmark_list[observations[loop_2].id].x_f; // assosiate‚³‚ê‚½ƒ‰ƒ“ƒhƒ}[ƒN‚ÌÀ•W
-			mu_y = map_landmarks.landmark_list[observations[loop_2].id].y_f; // assosiate‚³‚ê‚½ƒ‰ƒ“ƒhƒ}[ƒN‚ÌÀ•W
+			mu_x = map_landmarks.landmark_list[observations[loop_2].id].x_f; // assosiateã•ã‚ŒãŸãƒ©ãƒ³ãƒ‰ãƒãƒ¼ã‚¯ã®åº§æ¨™
+			mu_y = map_landmarks.landmark_list[observations[loop_2].id].y_f; // assosiateã•ã‚ŒãŸãƒ©ãƒ³ãƒ‰ãƒãƒ¼ã‚¯ã®åº§æ¨™
 
 			// calculate normalization term
 			gauss_norm = (1 / (2 * M_PI * sig_x * sig_y));
