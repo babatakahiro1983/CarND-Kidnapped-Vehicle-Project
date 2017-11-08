@@ -162,13 +162,17 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		// (1)Transform
 		for (int loop_2 = 0; loop_2 < observations.size(); ++loop_2) {
 
-			cout << "check point 5-2" << endl;
+			LandmarkObs obs_tmp;
+
+			obs_tmp.id = loop_2;
 			
 			// transform to map x coordinate
-			observations_map[loop_2].x = particles[loop_1].x + (cos(particles[loop_1].theta) * observations[loop_2].x) - (sin(particles[loop_1].theta) * observations[loop_2].y);
+			obs_tmp.x = particles[loop_1].x + (cos(particles[loop_1].theta) * observations[loop_2].x) - (sin(particles[loop_1].theta) * observations[loop_2].y);
 
 			//transform to map y coordinate
-			observations_map[loop_2].y = particles[loop_1].y + (sin(particles[loop_1].theta) * observations[loop_2].x) + (cos(particles[loop_1].theta) * observations[loop_2].y);
+			obs_tmp.y = particles[loop_1].y + (sin(particles[loop_1].theta) * observations[loop_2].x) + (cos(particles[loop_1].theta) * observations[loop_2].y);
+
+			observations_map.push_back(obs_tmp);
 
 		}
 		// (2)Associate
