@@ -48,7 +48,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	normal_distribution<double> dist_y(y, std_y);
 	normal_distribution<double> dist_theta(theta, std_theta);
 
-
+	cout << "check point 2-1" << endl;
 
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 
@@ -57,7 +57,11 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 		particles[loop_1].theta = dist_theta(gen);
 	}
 	
+	cout << "check point 2-2" << endl;
+	
 	is_initialized = true;
+	
+	cout << "check point 2-3" << endl;
 }
 
 void ParticleFilter::prediction(double delta_t, double std_pos[], double velocity, double yaw_rate) {
