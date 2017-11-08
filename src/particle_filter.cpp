@@ -168,6 +168,8 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			observations_map.push_back(obs_tmp);
 
 		}
+		cout << "landmarks " << observations_map.size() << endl;
+
 		// (2)Associate
 		for (int loop_4 = 0; loop_4 < map_landmarks.landmark_list.size(); ++loop_4) {
 
@@ -180,6 +182,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			landmarks.push_back(landmarks_tmp);
 			
 		}
+		cout << "landmarks " << landmarks.size() << endl;
 
 		dataAssociation(landmarks, observations_map);
 
@@ -207,6 +210,8 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			// multiply all the calculated measurement probabilities
 			particles[loop_1].weight = particles[loop_1].weight * weight;
 		}
+
+		cout << "weight " << particles[loop_1].weight << endl;
 	}
 
 }
