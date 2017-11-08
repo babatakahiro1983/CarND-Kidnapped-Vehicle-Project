@@ -156,10 +156,14 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 
 		particles[loop_1].weight = 1.0;
+		
+		cout << "check point 5-1" << endl;
 
 		// (1)Transform
 		for (int loop_2 = 0; loop_2 < observations.size(); ++loop_2) {
 
+			cout << "check point 5-2" << endl;
+			
 			// transform to map x coordinate
 			observations_map[loop_2].x = particles[loop_1].x + (cos(particles[loop_1].theta) * observations[loop_2].x) - (sin(particles[loop_1].theta) * observations[loop_2].y);
 
@@ -170,17 +174,25 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		// (2)Associate
 		for (int loop_4 = 0; loop_4 < map_landmarks.landmark_list.size(); ++loop_4) {
 
+			cout << "check point 5-3" << endl;
+			
 			landmarks[loop_4].id = map_landmarks.landmark_list[loop_4].id_i;
 			landmarks[loop_4].x = map_landmarks.landmark_list[loop_4].x_f;
 			landmarks[loop_4].y = map_landmarks.landmark_list[loop_4].y_f;
 		}
-
+		
+		cout << "check point 5-4" << endl;
 
 		dataAssociation(landmarks, observations_map);
 
 
+		
+		
 		// (3)updateWeight
 		for (int loop_2 = 0; loop_2 < observations.size(); ++loop_2) {
+			
+			cout << "check point 5-5" << endl;
+			
 			sig_x = std_landmark[0];
 			sig_y = std_landmark[1];
 			mu_x = map_landmarks.landmark_list[observations[loop_2].id].x_f; // assosiateされたランドマークの座標
@@ -199,6 +211,8 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			// multiply all the calculated measurement probabilities
 			particles[loop_1].weight = particles[loop_1].weight * weight;
 		}
+		
+		cout << "check point 5-6" << endl;
 	}
 
 }
