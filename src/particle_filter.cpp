@@ -179,10 +179,15 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		for (int loop_4 = 0; loop_4 < map_landmarks.landmark_list.size(); ++loop_4) {
 
 			cout << "check point 5-3" << endl;
+
+			LandmarkObs landmarks_tmp;
+
+			landmarks_tmp.id = map_landmarks.landmark_list[loop_4].id_i;
+			landmarks_tmp.x = map_landmarks.landmark_list[loop_4].x_f;
+			landmarks_tmp.y = map_landmarks.landmark_list[loop_4].y_f;
+
+			landmarks.push_back(landmarks_tmp);
 			
-			landmarks[loop_4].id = map_landmarks.landmark_list[loop_4].id_i;
-			landmarks[loop_4].x = map_landmarks.landmark_list[loop_4].x_f;
-			landmarks[loop_4].y = map_landmarks.landmark_list[loop_4].y_f;
 		}
 		
 		cout << "check point 5-4" << endl;
