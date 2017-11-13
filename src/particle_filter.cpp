@@ -54,10 +54,10 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 		Particle p_tmp;
 		p_tmp.id = loop_1;
 		p_tmp.x = dist_x(gen);
-	        p_tmp.y = dist_y(gen);
+	    p_tmp.y = dist_y(gen);
 		p_tmp.theta = dist_theta(gen);
 		p_tmp.weight = 1.0;
-                particles.push_back(p_tmp);
+        particles.push_back(p_tmp);
 	}
 
 	is_initialized = true;
@@ -93,9 +93,16 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 		normal_distribution<double> dist_y(particles[loop_1].y, std_y);
 		normal_distribution<double> dist_theta(particles[loop_1].theta, std_theta);
 
-		particles[loop_1].x = dist_x(gen) + velocity / yaw_rate * (sin(dist_theta(gen) + yaw_rate * delta_t) - sin(dist_theta(gen)));
-		particles[loop_1].y = dist_y(gen) + velocity / yaw_rate * (cos(dist_theta(gen)) - cos(dist_theta(gen) + yaw_rate * delta_t));
-		particles[loop_1].theta = dist_theta(gen) + yaw_rate * delta_t;
+		if (fabs(yaw_rate) > 0.000001) {
+
+			particles[loop_1].x = dist_x(gen) + velocity / yaw_rate * (sin(dist_theta(gen) + yaw_rate * delta_t) - sin(dist_theta(gen)));
+			particles[loop_1].y = dist_y(gen) + velocity / yaw_rate * (cos(dist_theta(gen)) - cos(dist_theta(gen) + yaw_rate * delta_t));
+			particles[loop_1].theta = dist_theta(gen) + yaw_rate * delta_t;
+		}
+		else {
+			particles[loop_1].x = dist_x(gen) + velocity * cos(dist_theta(gen)) * delta_t;
+			particles[loop_1].y = dist_y(gen) + velocity * sin(dist_theta(gen)) * delta_t;
+		}
 	}
 }
 
@@ -112,18 +119,18 @@ void ParticleFilter::dataAssociation(const std::vector<LandmarkObs> predicted, s
 	* @param observations Vector of landmark observations
 	*/
 
-	double dist_tmp, dist_min;
-	dist_min = 100;
-
-	// 観測点ごとにランドマークの最近点を探索する。
 	for (int loop_3 = 0; loop_3 < observations.size(); ++loop_3) {
+		
+		double dist_tmp, dist_min;
+		dist_min = 1000;
+
 		for (int loop_4 = 0; loop_4 < predicted.size(); ++loop_4) {
 			
 			dist_tmp = dist(predicted[loop_4].x, predicted[loop_4].y, observations[loop_3].x, observations[loop_3].y);
 
 			if (dist_tmp < dist_min) {
 		
-				observations[loop_3].id = loop_4; 
+				observations[loop_3].id = loop_4;
 				dist_min = dist_tmp;
 			}
 		}
@@ -147,7 +154,6 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 	double sig_x, sig_y, gauss_norm, exponent, mu_x, mu_y, weight;
 	std::vector<LandmarkObs> observations_map, landmarks;
 
-	
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 
 		particles[loop_1].weight = 1.0;		
@@ -157,7 +163,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 
 			LandmarkObs obs_tmp;
 
-			obs_tmp.id = loop_2;
+			obs_tmp.id = 0;
 			
 			// transform to map x coordinate
 			obs_tmp.x = particles[loop_1].x + (cos(particles[loop_1].theta) * observations[loop_2].x) - (sin(particles[loop_1].theta) * observations[loop_2].y);
@@ -168,7 +174,6 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			observations_map.push_back(obs_tmp);
 
 		}
-		cout << "observations " << observations_map.size() << endl;
 
 		// (2)Associate
 		for (int loop_4 = 0; loop_4 < map_landmarks.landmark_list.size(); ++loop_4) {
@@ -179,26 +184,24 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			landmarks_tmp.x = map_landmarks.landmark_list[loop_4].x_f;
 			landmarks_tmp.y = map_landmarks.landmark_list[loop_4].y_f;
 
-			landmarks.push_back(landmarks_tmp);
-			
+			if (dist(particles[loop_1].x, particles[loop_1].y, landmarks_tmp.x, landmarks_tmp.y) < sensor_range) {
+				landmarks.push_back(landmarks_tmp);
+			}
 		}
-		cout << "landmarks " << landmarks.size() << endl;
-
+		
+		
+		
 		dataAssociation(landmarks, observations_map);
 
-
-		
-		
 		// (3)updateWeight
 		for (int loop_2 = 0; loop_2 < observations.size(); ++loop_2) {
 			
 			sig_x = std_landmark[0];
 			sig_y = std_landmark[1];
-			mu_x = map_landmarks.landmark_list[observations[loop_2].id].x_f; // assosiateされたランドマークの座標
-			mu_y = map_landmarks.landmark_list[observations[loop_2].id].y_f; // assosiateされたランドマークの座標
+			mu_x = landmarks[observations_map[loop_2].id].x; 
+			mu_y = landmarks[observations_map[loop_2].id].y; 
 
-			cout << "observations_id " << observations[loop_2].id << endl;
-
+			cout << "observations_id " << observations_map[loop_2].id << endl;
 			cout << "observations_map_x " << observations_map[loop_2].x << endl;
 			cout << "observations_map_y " << observations_map[loop_2].y << endl;
 			cout << "mu_x " << mu_x << endl;
@@ -208,8 +211,8 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			gauss_norm = (1 / (2 * M_PI * sig_x * sig_y));
 
 			// calculate exponent
-			exponent = std::pow((observations_map[loop_2].x - mu_x), 2.0) / std::pow(2 * sig_x, 2.0) 
-				     + std::pow((observations_map[loop_2].y - mu_y), 2.0) / std::pow(2 * sig_y, 2.0);
+			exponent = std::pow((observations_map[loop_2].x - mu_x), 2.0) / std::pow((2 * sig_x), 2.0) 
+				     + std::pow((observations_map[loop_2].y - mu_y), 2.0) / std::pow((2 * sig_y), 2.0);
 
 			// calculate weight using normalization terms and exponent
 			weight = gauss_norm * exp(-exponent);
@@ -247,16 +250,14 @@ void ParticleFilter::resample() {
 
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 			
-		Particle p_temp;
-		
+
 		beta += rnd() * 2.0 * weight_max;
 		while (beta > particles[index].weight) {
 			beta -= particles[index].weight;
 			index = (index + 1) % num_particles;
 		}
 
-		p_temp = particles[index];
-		particles_temp.push_back(p_temp);
+		particles_temp.push_back(particles[index]);
 
 	}
 	
