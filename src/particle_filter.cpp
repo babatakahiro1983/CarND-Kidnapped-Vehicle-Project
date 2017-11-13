@@ -44,18 +44,18 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	std_theta = std[2];
 
 	// Creates a normal (Gaussian) distribution for x, y and theta
-	normal_distribution<double> dist_x(x, std_x);
-	normal_distribution<double> dist_y(y, std_y);
-	normal_distribution<double> dist_theta(theta, std_theta);
+	normal_distribution<double> dist_x(0, std_x);
+	normal_distribution<double> dist_y(0, std_y);
+	normal_distribution<double> dist_theta(0, std_theta);
 
 
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 
 		Particle p_tmp;
 		p_tmp.id = loop_1;
-		p_tmp.x = dist_x(gen);
-	    p_tmp.y = dist_y(gen);
-		p_tmp.theta = dist_theta(gen);
+		p_tmp.x = x + dist_x(gen);
+	    p_tmp.y = y + dist_y(gen);
+		p_tmp.theta = theta + dist_theta(gen);
 		p_tmp.weight = 1.0;
         particles.push_back(p_tmp);
 	}
