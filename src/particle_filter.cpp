@@ -126,7 +126,9 @@ void ParticleFilter::dataAssociation(const std::vector<LandmarkObs> predicted, s
 	for (int loop_3 = 0; loop_3 < observations.size(); ++loop_3) {
 		
 		double dist_tmp, dist_min;
+		int id_tmp;
 		dist_min = 1000;
+		id_tmp = -1;
 
 		for (int loop_4 = 0; loop_4 < predicted.size(); ++loop_4) {
 			
@@ -134,10 +136,12 @@ void ParticleFilter::dataAssociation(const std::vector<LandmarkObs> predicted, s
 
 			if (dist_tmp < dist_min) {
 		
-				observations[loop_3].id = loop_4;
+				id_tmp = loop_4;
 				dist_min = dist_tmp;
 			}
 		}
+
+		observations[loop_3].id = id_tmp;
 	}
 
 }
@@ -198,14 +202,14 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		dataAssociation(landmarks, observations_map);
 
 		// (3)updateWeight
-		for (int loop_2 = 0; loop_2 < observations.size(); ++loop_2) {
+		for (int loop_2 = 0; loop_2 < observations_map.size(); ++loop_2) {
 			
 			sig_x = std_landmark[0];
 			sig_y = std_landmark[1];
 			mu_x = landmarks[observations_map[loop_2].id].x; 
 			mu_y = landmarks[observations_map[loop_2].id].y; 
 
-			//cout << "observations_id " << observations_map[loop_2].id << endl;
+			cout << "observations_id " << observations_map[loop_2].id << endl;
 			//cout << "observations_map_x " << observations_map[loop_2].x << endl;
 			//cout << "observations_map_y " << observations_map[loop_2].y << endl;
 			//cout << "mu_x " << mu_x << endl;
@@ -237,13 +241,11 @@ void ParticleFilter::resample() {
 	// NOTE: You may find std::discrete_distribution helpful here.
 	//   http://en.cppreference.com/w/cpp/numeric/random/discrete_distribution
 
-	std::random_device rnd;
 	default_random_engine gen;
 	std::vector<Particle> particles_temp;
-	std::discrete_distribution<int> dist(0,num_particles - 1);
-	std::uniform_int_distribution<int> uniintdist(0, num_particles-1);
+	std::uniform_int_distribution<int> uni_int_dist(0, num_particles-1);
 	
-	int index = uniintdist(gen);
+	int index = uni_int_dist(gen);
 	double beta = 0.0;
 	double weight_max = 0.0;
 
@@ -253,7 +255,7 @@ void ParticleFilter::resample() {
 		}
 	}
 	
-	uniform_real_distribution<double> unirealdist(0.0, weight_max);
+	uniform_real_distribution<double> uni_real_dist(0.0, weight_max);
 	
 	cout << "weight_max " << weight_max << endl;
 	cout << "index " << index << endl;
@@ -262,7 +264,7 @@ void ParticleFilter::resample() {
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 			
 
-		beta += unirealdist(gen) * 2.0;
+		beta += uni_real_dist(gen) * 2.0;
 		cout << "beta " << beta << endl;
 		cout << "particles[index].weight" << particles[index].weight << endl;
 		while (beta > particles[index].weight) {
@@ -276,10 +278,7 @@ void ParticleFilter::resample() {
 	
 	cout << "resample 1" << endl;
 	
-	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
-
-		particles[loop_1] = particles_temp[loop_1];
-	}
+	particles = particles_temp;
 	
 	cout << "resample 2" << endl;
 
