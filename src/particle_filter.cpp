@@ -249,7 +249,7 @@ void ParticleFilter::resample() {
 		}
 	}
 	
-	uniform_real_distribution<double> unirealdist(0.0, max_weight);
+	uniform_real_distribution<double> unirealdist(0.0, weight_max);
 	
 	cout << "weight_max " << weight_max << endl;
 	cout << "index " << index << endl;
