@@ -256,12 +256,10 @@ void ParticleFilter::resample() {
 
 		beta += rnd() * 2.0 * weight_max;
 		cout << "beta " << beta << endl;
+		cout << "particles[index].weight" << particles[index].weight << endl;
 		while (beta > particles[index].weight) {
 			beta -= particles[index].weight;
 			index = (index + 1) % num_particles;
-			cout << "beta in loop" << beta << endl;
-			cout << "particles[index].weight" << particles[index].weight << endl;
-			cout << "index" << index << endl;
 		}
 
 		particles_temp.push_back(particles[index]);
