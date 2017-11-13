@@ -201,11 +201,11 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			mu_x = landmarks[observations_map[loop_2].id].x; 
 			mu_y = landmarks[observations_map[loop_2].id].y; 
 
-			cout << "observations_id " << observations_map[loop_2].id << endl;
-			cout << "observations_map_x " << observations_map[loop_2].x << endl;
-			cout << "observations_map_y " << observations_map[loop_2].y << endl;
-			cout << "mu_x " << mu_x << endl;
-			cout << "mu_y " << mu_y << endl;
+			//cout << "observations_id " << observations_map[loop_2].id << endl;
+			//cout << "observations_map_x " << observations_map[loop_2].x << endl;
+			//cout << "observations_map_y " << observations_map[loop_2].y << endl;
+			//cout << "mu_x " << mu_x << endl;
+			//cout << "mu_y " << mu_y << endl;
 
 			// calculate normalization term
 			gauss_norm = (1 / (2 * M_PI * sig_x * sig_y));
@@ -220,7 +220,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			// multiply all the calculated measurement probabilities
 			particles[loop_1].weight = particles[loop_1].weight * weight;
 
-			cout << "weight " << weight << endl;
+			//cout << "weight " << weight << endl;
 		}
 
 		cout << "weight " << particles[loop_1].weight << endl;
@@ -246,6 +246,8 @@ void ParticleFilter::resample() {
 			weight_max = particles[loop_1].weight;
 		}
 	}
+	
+	cout << "weight_max " << weight_max << endl;
 
 
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
@@ -261,10 +263,14 @@ void ParticleFilter::resample() {
 
 	}
 	
+	cout << "resample 1" << endl;
+	
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 
 		particles[loop_1] = particles_temp[loop_1];
 	}
+	
+	cout << "resample 2" << endl;
 
 }
 
