@@ -234,7 +234,7 @@ void ParticleFilter::resample() {
 	//   http://en.cppreference.com/w/cpp/numeric/random/discrete_distribution
 
 	std::random_device rnd;
-	default_random_engine gen
+	default_random_engine gen;
 	std::vector<Particle> particles_temp;
 	std::discrete_distribution<int> dist(0,num_particles - 1);
 	std::uniform_int_distribution<int> uniintdist(0, num_particles-1);
