@@ -234,10 +234,12 @@ void ParticleFilter::resample() {
 	//   http://en.cppreference.com/w/cpp/numeric/random/discrete_distribution
 
 	std::random_device rnd;
+	default_random_engine gen
 	std::vector<Particle> particles_temp;
 	std::discrete_distribution<int> dist(0,num_particles - 1);
+	std::uniform_int_distribution<int> uniintdist(0, num_particles-1);
 	
-	int index = dist(rnd);
+	int index = uniintdist(gen);
 	double beta = 0.0;
 	double weight_max = 0.0;
 
@@ -247,6 +249,8 @@ void ParticleFilter::resample() {
 		}
 	}
 	
+	uniform_real_distribution<double> unirealdist(0.0, max_weight);
+	
 	cout << "weight_max " << weight_max << endl;
 	cout << "index " << index << endl;
 
@@ -254,7 +258,7 @@ void ParticleFilter::resample() {
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 			
 
-		beta += rnd() * 2.0 * weight_max;
+		beta += unirealdist(gen) * 2.0;
 		cout << "beta " << beta << endl;
 		cout << "particles[index].weight" << particles[index].weight << endl;
 		while (beta > particles[index].weight) {
