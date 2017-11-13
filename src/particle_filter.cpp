@@ -89,20 +89,24 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 	for (int loop_1= 0; loop_1 < num_particles; ++loop_1) {
 
 		// Creates a normal (Gaussian) distribution for 
-		normal_distribution<double> dist_x(particles[loop_1].x, std_x);
-		normal_distribution<double> dist_y(particles[loop_1].y, std_y);
-		normal_distribution<double> dist_theta(particles[loop_1].theta, std_theta);
+		normal_distribution<double> dist_x(0, std_x);
+		normal_distribution<double> dist_y(0, std_y);
+		normal_distribution<double> dist_theta(0, std_theta);
 
 		if (fabs(yaw_rate) > 0.000001) {
 
-			particles[loop_1].x = dist_x(gen) + velocity / yaw_rate * (sin(dist_theta(gen) + yaw_rate * delta_t) - sin(dist_theta(gen)));
-			particles[loop_1].y = dist_y(gen) + velocity / yaw_rate * (cos(dist_theta(gen)) - cos(dist_theta(gen) + yaw_rate * delta_t));
-			particles[loop_1].theta = dist_theta(gen) + yaw_rate * delta_t;
+			particles[loop_1].x = particles[loop_1].x + velocity / yaw_rate * (sin(particles[loop_1].theta + yaw_rate * delta_t) - sin(particles[loop_1].theta));
+			particles[loop_1].y = particles[loop_1].y + velocity / yaw_rate * (cos(particles[loop_1].theta) - cos(particles[loop_1].theta + yaw_rate * delta_t));
+			particles[loop_1].theta = particles[loop_1].theta + yaw_rate * delta_t;
 		}
 		else {
-			particles[loop_1].x = dist_x(gen) + velocity * cos(dist_theta(gen)) * delta_t;
-			particles[loop_1].y = dist_y(gen) + velocity * sin(dist_theta(gen)) * delta_t;
+			particles[loop_1].x = particles[loop_1].x + velocity * cos(particles[loop_1].theta) * delta_t;
+			particles[loop_1].y = particles[loop_1].y + velocity * sin(particles[loop_1].theta) * delta_t;
 		}
+		particles[loop_1].x = particles[loop_1].x + dist_x(gen);
+		particles[loop_1].y = particles[loop_1].y + dist_y(gen);
+		particles[loop_1].theta = particles[loop_1].theta + dist_theta(gen);
+			
 	}
 }
 
@@ -220,7 +224,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			// multiply all the calculated measurement probabilities
 			particles[loop_1].weight = particles[loop_1].weight * weight;
 
-			//cout << "weight " << weight << endl;
+			cout << "weight loop_2 " << weight << endl;
 		}
 
 		cout << "weight " << particles[loop_1].weight << endl;
