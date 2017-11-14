@@ -228,10 +228,10 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			// multiply all the calculated measurement probabilities
 			particles[loop_1].weight = particles[loop_1].weight * weight;
 
-			cout << "weight loop_2 " << weight << endl;
+			//cout << "weight loop_2 " << weight << endl;
 		}
 
-		cout << "weight " << particles[loop_1].weight << endl;
+		//cout << "weight " << particles[loop_1].weight << endl;
 	}
 
 }
@@ -257,8 +257,8 @@ void ParticleFilter::resample() {
 	
 	uniform_real_distribution<double> uni_real_dist(0.0, weight_max);
 	
-	cout << "weight_max " << weight_max << endl;
-	cout << "index " << index << endl;
+	//cout << "weight_max " << weight_max << endl;
+	//cout << "index " << index << endl;
 
 
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
@@ -276,11 +276,11 @@ void ParticleFilter::resample() {
 
 	}
 	
-	cout << "resample 1" << endl;
+	//cout << "resample 1" << endl;
 	
 	particles = particles_temp;
 	
-	cout << "resample 2" << endl;
+	//cout << "resample 2" << endl;
 
 }
 
