@@ -237,6 +237,15 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		cout << "loop_1 " << loop_1 << endl;
 		cout << "muilt_weight " << particles[loop_1].weight << endl;
 	}
+	
+	// normarization
+	double weight_sum = 0.0;
+	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
+		weight_sum += particles[loop_1].weight
+	}
+	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
+		particles[loop_1].weight = particles[loop_1].weight / weight_sum;
+	}
 
 }
 
@@ -252,12 +261,14 @@ void ParticleFilter::resample() {
 	int index = uni_int_dist(gen);
 	double beta = 0.0;
 	double weight_max = 0.0;
+	
 
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 		if (weight_max < particles[loop_1].weight) {
 			weight_max = particles[loop_1].weight;
 		}
 	}
+	
 	
 	uniform_real_distribution<double> uni_real_dist(0.0, weight_max);
 	
