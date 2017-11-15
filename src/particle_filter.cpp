@@ -241,7 +241,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 	// normarization
 	double weight_sum = 0.0;
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
-		weight_sum += particles[loop_1].weight
+		weight_sum += particles[loop_1].weight;
 	}
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 		particles[loop_1].weight = particles[loop_1].weight / weight_sum;
