@@ -267,8 +267,8 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			//cout << "particles[loop_1].weight " << particles[loop_1].weight << endl;
 		}
 			
-		cout << "loop_1 " << loop_1 << endl;
-		cout << "muilt_weight " << particles[loop_1].weight << endl;
+		//cout << "loop_1 " << loop_1 << endl;
+		//cout << "muilt_weight " << particles[loop_1].weight << endl;
 
 		weight_sum += particles[loop_1].weight;
 	}
