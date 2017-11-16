@@ -46,7 +46,7 @@ int main()
   // Create particle filter
   ParticleFilter pf;
 
-  pf.num_particles = 1; // Number of particles to draw
+  pf.num_particles = 50; // Number of particles to draw
 
   h.onMessage([&pf,&map,&delta_t,&sensor_range,&sigma_pos,&sigma_landmark](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
