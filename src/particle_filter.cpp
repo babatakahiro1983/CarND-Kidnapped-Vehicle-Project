@@ -159,7 +159,8 @@ void ParticleFilter::dataAssociation(const std::vector<LandmarkObs> predicted, s
 
 			if (dist_tmp < dist_min) {
 		
-				id_tmp = loop_4;
+				//id_tmp = loop_4;
+				id_tmp = predicted[loop_4].id;
 				dist_min = dist_tmp;
 			}
 		}
@@ -239,8 +240,16 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			
 			sig_x = std_landmark[0];
 			sig_y = std_landmark[1];
-			mu_x = landmarks[observations_map[loop_2].id].x; 
-			mu_y = landmarks[observations_map[loop_2].id].y; 
+			//mu_x = landmarks[observations_map[loop_2].id].x; 
+			//mu_y = landmarks[observations_map[loop_2].id].y;
+			
+			for (int loop_4 = 0; loop_4 < landmarks.size(); ++loop_4) {
+
+				if(landmarks[loop_4].id == observations_map[loop_2].id){
+					mu_x = landmarks[loop_4].x; 
+					mu_y = landmarks[loop_4].y;
+				 }
+			}
 
 			//cout << "loop_1 " << loop_1 << endl;
 			//cout << "loop_2 " << loop_2 << endl;
@@ -270,16 +279,9 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		//cout << "loop_1 " << loop_1 << endl;
 		//cout << "muilt_weight " << particles[loop_1].weight << endl;
 
-		weight_sum += particles[loop_1].weight;
+		//weight_sum += particles[loop_1].weight;
 	}
 	
-	// normarization
-	if (weight_sum > 0) {
-		for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
-			particles[loop_1].weight /= weight_sum;
-			cout << "normalized_weight " << particles[loop_1].weight << endl;
-		}
-	}
 }
 
 void ParticleFilter::resample() {
