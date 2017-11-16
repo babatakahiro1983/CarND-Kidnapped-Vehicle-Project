@@ -49,38 +49,38 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	normal_distribution<double> dist_theta(0, std_theta);
 
 
-	//for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
-
-	//	Particle p_tmp;
-	//	p_tmp.id = loop_1;
-	//	p_tmp.x = x + dist_x(gen);
-	//    p_tmp.y = y + dist_y(gen);
-	//	p_tmp.theta = theta + dist_theta(gen);
-	//	p_tmp.weight = 1.0;
- //       particles.push_back(p_tmp);
-	//}
-
-	// prediction debug
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 
 		Particle p_tmp;
 		p_tmp.id = loop_1;
-		p_tmp.x = x;
-		p_tmp.y = y;
-		p_tmp.theta = theta;
+		p_tmp.x = x + dist_x(gen);
+	    p_tmp.y = y + dist_y(gen);
+		p_tmp.theta = theta + dist_theta(gen);
 		p_tmp.weight = 1.0;
-		particles.push_back(p_tmp);
+        particles.push_back(p_tmp);
 	}
 
-	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
+	// prediction debug
+	//for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
+//
+//		Particle p_tmp;
+//		p_tmp.id = loop_1;
+//		p_tmp.x = x;
+//		p_tmp.y = y;
+//		p_tmp.theta = theta;
+//		p_tmp.weight = 1.0;
+//		particles.push_back(p_tmp);
+//	}
 
-		if (loop_1 == 0) {
-			particles[loop_1].weight = 1.0;
-		}
-		else {
-			particles[loop_1].weight = 0.0;
-		}
-	}
+//	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
+//
+//		if (loop_1 == 0) {
+//			particles[loop_1].weight = 1.0;
+//		}
+//		else {
+//			particles[loop_1].weight = 0.0;
+//		}
+//	}
 
 
 	is_initialized = true;
@@ -229,10 +229,10 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		dataAssociation(landmarks, observations_map);
 
 		// debug code
-		//for (int loop_2 = 0; loop_2 < observations_map.size(); ++loop_2) {
-		//	cout << "observation " << loop_2 << " x:" << observations_map[loop_2].x << " y:" << observations_map[loop_2].y << endl;
-		//    cout << "associated with landmark " << observations_map[loop_2].id << " x:" << landmarks[observations_map[loop_2].id].x << " y:" << landmarks[observations_map[loop_2].id].y << endl;
-		//}
+		for (int loop_2 = 0; loop_2 < observations_map.size(); ++loop_2) {
+			cout << "observation " << loop_2 << " x:" << observations_map[loop_2].x << " y:" << observations_map[loop_2].y << endl;
+		    cout << "associated with landmark " << observations_map[loop_2].id << " x:" << landmarks[observations_map[loop_2].id].x << " y:" << landmarks[observations_map[loop_2].id].y << endl;
+		}
 
 		// (3)updateWeight
 		for (int loop_2 = 0; loop_2 < observations_map.size(); ++loop_2) {
