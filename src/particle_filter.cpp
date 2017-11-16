@@ -49,16 +49,39 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	normal_distribution<double> dist_theta(0, std_theta);
 
 
+	//for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
+
+	//	Particle p_tmp;
+	//	p_tmp.id = loop_1;
+	//	p_tmp.x = x + dist_x(gen);
+	//    p_tmp.y = y + dist_y(gen);
+	//	p_tmp.theta = theta + dist_theta(gen);
+	//	p_tmp.weight = 1.0;
+ //       particles.push_back(p_tmp);
+	//}
+
+	// prediction debug
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 
 		Particle p_tmp;
 		p_tmp.id = loop_1;
-		p_tmp.x = x + dist_x(gen);
-	    p_tmp.y = y + dist_y(gen);
-		p_tmp.theta = theta + dist_theta(gen);
+		p_tmp.x = x;
+		p_tmp.y = y;
+		p_tmp.theta = theta;
 		p_tmp.weight = 1.0;
-        particles.push_back(p_tmp);
+		particles.push_back(p_tmp);
 	}
+
+	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
+
+		if (loop_1 == 0) {
+			particles[loop_1].weight = 1.0;
+		}
+		else {
+			particles[loop_1].weight = 0.0;
+		}
+	}
+
 
 	is_initialized = true;
 }
@@ -86,26 +109,26 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 	std_y = std_pos[1];
 	std_theta = std_pos[2];
 
-	for (int loop_1= 0; loop_1 < num_particles; ++loop_1) {
+	// Creates a normal (Gaussian) distribution for 
+	normal_distribution<double> dist_x(0, std_x);
+	normal_distribution<double> dist_y(0, std_y);
+	normal_distribution<double> dist_theta(0, std_theta);
 
-		// Creates a normal (Gaussian) distribution for 
-		normal_distribution<double> dist_x(0, std_x);
-		normal_distribution<double> dist_y(0, std_y);
-		normal_distribution<double> dist_theta(0, std_theta);
+	for (int loop_1= 0; loop_1 < num_particles; ++loop_1) {
 
 		if (fabs(yaw_rate) > 0.000001) {
 
-			particles[loop_1].x = particles[loop_1].x + velocity / yaw_rate * (sin(particles[loop_1].theta + yaw_rate * delta_t) - sin(particles[loop_1].theta));
-			particles[loop_1].y = particles[loop_1].y + velocity / yaw_rate * (cos(particles[loop_1].theta) - cos(particles[loop_1].theta + yaw_rate * delta_t));
-			particles[loop_1].theta = particles[loop_1].theta + yaw_rate * delta_t;
+			particles[loop_1].x += velocity / yaw_rate * (sin(particles[loop_1].theta + yaw_rate * delta_t) - sin(particles[loop_1].theta));
+			particles[loop_1].y += velocity / yaw_rate * (cos(particles[loop_1].theta) - cos(particles[loop_1].theta + yaw_rate * delta_t));
+			particles[loop_1].theta += yaw_rate * delta_t;
 		}
 		else {
-			particles[loop_1].x = particles[loop_1].x + velocity * cos(particles[loop_1].theta) * delta_t;
-			particles[loop_1].y = particles[loop_1].y + velocity * sin(particles[loop_1].theta) * delta_t;
+			particles[loop_1].x += velocity * cos(particles[loop_1].theta) * delta_t;
+			particles[loop_1].y += velocity * sin(particles[loop_1].theta) * delta_t;
 		}
-		particles[loop_1].x = particles[loop_1].x + dist_x(gen);
-		particles[loop_1].y = particles[loop_1].y + dist_y(gen);
-		particles[loop_1].theta = particles[loop_1].theta + dist_theta(gen);
+		particles[loop_1].x += dist_x(gen);
+		particles[loop_1].y += dist_y(gen);
+		particles[loop_1].theta += dist_theta(gen);
 			
 	}
 }
@@ -159,8 +182,12 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 	//   3.33
 	//   http://planning.cs.uiuc.edu/node99.html
 
-	double sig_x, sig_y, gauss_norm, exponent, mu_x, mu_y, weight;
+	// デバッグ手順 https://discussions.udacity.com/t/full-flow-awful-result/329055
+
+	double sig_x, sig_y, gauss_norm, exponent, mu_x, mu_y, weight, weight_sum;
 	std::vector<LandmarkObs> observations_map, landmarks;
+
+	weight_sum = 0.0;
 
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 
@@ -201,6 +228,12 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		
 		dataAssociation(landmarks, observations_map);
 
+		// debug code
+		for (int loop_2 = 0; loop_2 < observations_map.size(); ++loop_2) {
+			cout << "observation " << loop_2 << " x:" << observations_map[loop_2].x << " y:" << observations_map[loop_2].y << endl;
+		    cout << "associated with landmark " << observations_map[loop_2].id << " x:" << landmarks[observations_map[loop_2].id].x << " y:" << landmarks[observations_map[loop_2].id].y << endl;
+		}
+
 		// (3)updateWeight
 		for (int loop_2 = 0; loop_2 < observations_map.size(); ++loop_2) {
 			
@@ -228,7 +261,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			weight = gauss_norm * exp(-exponent);
 
 			// multiply all the calculated measurement probabilities
-			particles[loop_1].weight = particles[loop_1].weight * weight;
+			particles[loop_1].weight *= weight;
 
 			//cout << "weight loop_2 " << weight << endl;
 			//cout << "particles[loop_1].weight " << particles[loop_1].weight << endl;
@@ -236,17 +269,17 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			
 		cout << "loop_1 " << loop_1 << endl;
 		cout << "muilt_weight " << particles[loop_1].weight << endl;
+
+		weight_sum += particles[loop_1].weight;
 	}
 	
 	// normarization
-	double weight_sum = 0.0;
-	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
-		weight_sum += particles[loop_1].weight;
+	if (weight_sum > 0) {
+		for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
+			particles[loop_1].weight /= weight_sum;
+			cout << "normalized_weight " << particles[loop_1].weight << endl;
+		}
 	}
-	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
-		particles[loop_1].weight = particles[loop_1].weight / weight_sum;
-	}
-
 }
 
 void ParticleFilter::resample() {
