@@ -250,6 +250,10 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 					mu_y = landmarks[loop_4].y;
 				 }
 			}
+			
+			cout << "observation " << loop_2 << " x:" << observations_map[loop_2].x << " y:" << observations_map[loop_2].y << endl;
+		    	cout << "associated with landmark " << observations_map[loop_2].id << " x:" << mu_x << " y:" << mu_y << endl;
+		
 
 			//cout << "loop_1 " << loop_1 << endl;
 			//cout << "loop_2 " << loop_2 << endl;
