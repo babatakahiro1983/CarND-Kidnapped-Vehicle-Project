@@ -182,7 +182,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 	//   3.33
 	//   http://planning.cs.uiuc.edu/node99.html
 
-	// ƒfƒoƒbƒOè‡ https://discussions.udacity.com/t/full-flow-awful-result/329055
+	// Æ’fÆ’oÆ’bÆ’OÅ½Ã¨Ââ€¡ https://discussions.udacity.com/t/full-flow-awful-result/329055
 
 	double sig_x, sig_y, gauss_norm, exponent, mu_x, mu_y, weight, weight_sum;
 	std::vector<LandmarkObs> observations_map, landmarks;
@@ -229,10 +229,10 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		dataAssociation(landmarks, observations_map);
 
 		// debug code
-		for (int loop_2 = 0; loop_2 < observations_map.size(); ++loop_2) {
-			cout << "observation " << loop_2 << " x:" << observations_map[loop_2].x << " y:" << observations_map[loop_2].y << endl;
-		    cout << "associated with landmark " << observations_map[loop_2].id << " x:" << landmarks[observations_map[loop_2].id].x << " y:" << landmarks[observations_map[loop_2].id].y << endl;
-		}
+		//for (int loop_2 = 0; loop_2 < observations_map.size(); ++loop_2) {
+		//	cout << "observation " << loop_2 << " x:" << observations_map[loop_2].x << " y:" << observations_map[loop_2].y << endl;
+		//    cout << "associated with landmark " << observations_map[loop_2].id << " x:" << landmarks[observations_map[loop_2].id].x << " y:" << landmarks[observations_map[loop_2].id].y << endl;
+		//}
 
 		// (3)updateWeight
 		for (int loop_2 = 0; loop_2 < observations_map.size(); ++loop_2) {
