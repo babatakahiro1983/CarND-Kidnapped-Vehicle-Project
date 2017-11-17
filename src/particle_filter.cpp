@@ -48,6 +48,8 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	normal_distribution<double> dist_y(0, std_y);
 	normal_distribution<double> dist_theta(0, std_theta);
 
+	num_particles = 100;
+
 
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 
@@ -186,13 +188,14 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 	// ƒfƒoƒbƒOŽè‡ https://discussions.udacity.com/t/full-flow-awful-result/329055
 
 	double sig_x, sig_y, gauss_norm, exponent, mu_x, mu_y, weight, weight_sum;
-	std::vector<LandmarkObs> observations_map, landmarks;
+	
 
 	weight_sum = 0.0;
 
 	for (int loop_1 = 0; loop_1 < num_particles; ++loop_1) {
 
 		particles[loop_1].weight = 1.0;		
+		std::vector<LandmarkObs> observations_map, landmarks;
 
 		// (1)Transform
 		for (int loop_2 = 0; loop_2 < observations.size(); ++loop_2) {
